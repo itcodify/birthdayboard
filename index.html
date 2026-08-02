@@ -3,28 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Girls Who Yap — Birthday Board</title>
+<title>Birthday Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<!--
-  ============================================================
-  FIREBASE SETUP — fill this in before deploying to GitHub Pages
-  1. Create a free project at https://console.firebase.google.com
-  2. Build > Firestore Database > Create database > test mode
-  3. Project settings > Your apps > </> (web) > register app
-  4. Copy the config object it gives you into FIREBASE_CONFIG below
-  5. In Firestore > Rules, publish:
-       rules_version = '2';
-       service cloud.firestore {
-         match /databases/{database}/documents {
-           match /boards/girlswhoyap {
-             allow read, write: if true;
-           }
-         }
-       }
-  ============================================================
--->
+
 <style>
   :root{
     --bg-deep:#150f2b;
@@ -72,52 +55,37 @@
   }
   .orb-1{width:420px;height:420px;background:var(--accent);top:-120px;left:-100px;animation:drift1 26s ease-in-out infinite;}
   .orb-2{width:360px;height:360px;background:var(--gold);bottom:-140px;right:-80px;animation:drift2 32s ease-in-out infinite;}
-  @keyframes drift1{
-    0%,100%{transform:translate(0,0);}
-    50%{transform:translate(40px,60px);}
-  }
-  @keyframes drift2{
-    0%,100%{transform:translate(0,0);}
-    50%{transform:translate(-50px,-40px);}
-  }
-  @media (prefers-reduced-motion: reduce){
-    .orb-1,.orb-2{animation:none;}
-  }
+  @keyframes drift1{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(40px,60px);} }
+  @keyframes drift2{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(-50px,-40px);} }
 
   .wrap{
     position:relative;
     z-index:1;
     max-width:1080px;
     margin:0 auto;
-    padding:0 24px 100px;
+    padding:40px 24px 100px;
   }
 
-  /* NAV */
-  nav{
-    position:sticky;
-    top:0;
-    z-index:20;
+  /* TOP RIGHT AUTH BAR */
+  .top-auth-bar {
+    position:absolute;
+    top:32px;
+    right:24px;
+    z-index:10;
     display:flex;
     align-items:center;
-    justify-content:center;
-    padding:18px 24px;
-    margin:0 -24px 0;
-    background:rgba(21,15,43,0.45);
-    backdrop-filter:blur(18px) saturate(140%);
-    -webkit-backdrop-filter:blur(18px) saturate(140%);
-    border-bottom:1px solid rgba(255,255,255,0.08);
+    gap:12px;
   }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:9px;
+  .user-badge {
     font-family:'JetBrains Mono', monospace;
-    font-weight:600;
-    font-size:1.8rem;
-    letter-spacing:1px;
-    line-height:1;
+    font-size:0.78rem;
+    color:var(--cream-dim);
+    padding:8px 16px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:999px;
+    backdrop-filter:blur(12px);
   }
-  .brand .dot{color:var(--gold); font-style:normal;}
 
   .btn{
     font-family:'Plus Jakarta Sans', sans-serif;
@@ -143,14 +111,14 @@
     background:var(--glass);
     border:1px solid var(--glass-border);
     color:var(--cream);
-    margin:0;
+    backdrop-filter:blur(12px);
   }
-  .btn-ghost:hover{background:var(--glass-strong);}
-  .btn-sm{padding:8px 15px; font-size:0.78rem;}
+  .btn-ghost:hover{background:var(--glass-strong); transform:translateY(-1px);}
+  .btn-sm{padding:9px 18px; font-size:0.82rem;}
 
   /* HERO */
   .hero{
-    padding:70px 0 46px;
+    padding:40px 0 30px;
     text-align:left;
   }
   .eyebrow{
@@ -188,33 +156,26 @@
     font-size:1.02rem;
     line-height:1.6;
     color:var(--cream-dim);
-    max-width:46ch;
+    max-width:48ch;
     margin:0 0 30px;
   }
   .hero-actions{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
-  .hero-actions .divider{
-    width:1px; height:22px;
-    background:rgba(255,255,255,0.18);
-    margin:0 2px;
-  }
 
-  /* SYNC STATUS — only visible while saving/loading or on error */
-  .sync-status{
-    display:none;
+  /* SPACE BANNER */
+  .space-pill-bar{
+    margin-top:20px;
+    display:inline-flex;
     align-items:center;
-    gap:6px;
+    gap:10px;
+    padding:8px 16px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:999px;
     font-family:'JetBrains Mono', monospace;
-    font-size:0.68rem;
-    color:var(--cream-dim);
-    margin-top:16px;
+    font-size:0.8rem;
   }
-  .sync-status.visible{display:inline-flex;}
-  .sync-status::before{content:'●'; font-size:0.5rem; color:var(--cream-dim);}
-  .sync-status.saving::before{color:var(--gold-soft);}
-  .sync-status.error{color:var(--gold-soft); cursor:pointer; text-decoration:underline; text-underline-offset:3px;}
-  .sync-status.error::before{color:#e8794f;}
 
-  /* NEXT UP — signature widget */
+  /* NEXT UP */
   .nextup{
     margin-top:36px;
     display:grid;
@@ -279,8 +240,8 @@
   }
   .empty-nextup{color:var(--cream-dim); font-size:0.95rem; line-height:1.6;}
 
-  /* FORM CARD */
-  .form-card{
+  /* MODALS & FORMS */
+  .glass-card{
     margin-top:26px;
     background:var(--glass-strong);
     border:1px solid var(--glass-border);
@@ -288,17 +249,11 @@
     padding:28px;
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
-    display:none;
   }
-  .form-card.open{display:block; animation:slideIn .35s ease;}
+  .form-card{ display:none; }
+  .form-card.open{ display:block; animation:slideIn .35s ease; }
   @keyframes slideIn{ from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);} }
-  .form-card h3{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-style:italic;
-    font-size:1.3rem;
-    margin:0 0 20px;
-  }
+
   .field-row{
     display:grid;
     grid-template-columns:1.6fr 1fr 1fr 0.9fr;
@@ -332,10 +287,26 @@
     background:rgba(255,255,255,0.1);
   }
   select option{background:#2c1854; color:var(--cream);}
-  .form-actions{display:flex; gap:10px; align-items:center; margin-top:6px; flex-wrap:wrap;}
-  .form-msg{font-size:0.82rem; color:var(--gold-soft); font-family:'JetBrains Mono', monospace;}
 
-  /* SECTIONS */
+  /* SPACE SELECTOR MODAL OVERLAY */
+  .modal-overlay{
+    position:fixed;
+    top:0; left:0; width:100vw; height:100vh;
+    background:rgba(15, 10, 30, 0.85);
+    backdrop-filter:blur(16px);
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .space-box{
+    width:100%;
+    max-width:440px;
+  }
+
+  /* SECTIONS & BOARD */
   section.board{margin-top:64px;}
   .section-head{
     display:flex;
@@ -377,8 +348,6 @@
     border-radius:14px;
     padding:13px 14px;
     backdrop-filter:blur(16px) saturate(150%);
-    -webkit-backdrop-filter:blur(16px) saturate(150%);
-    transition:transform .18s ease, background .18s ease, border-color .18s ease;
     position:relative;
   }
   .p-card:hover{transform:translateY(-3px); background:var(--glass-strong);}
@@ -386,32 +355,17 @@
     border-color:rgba(255,207,134,0.55);
     box-shadow:0 0 30px rgba(255,207,134,0.14);
   }
-  .p-card .top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:6px;}
   .p-card .pname{
     font-family:'Fraunces', serif;
     font-weight:600;
     font-size:0.95rem;
     margin:0 0 2px;
-    line-height:1.25;
   }
   .p-card .pdate{
     font-family:'JetBrains Mono', monospace;
     font-size:0.68rem;
     color:var(--cream-dim);
   }
-  .badge{
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.6rem;
-    letter-spacing:0.03em;
-    padding:3px 8px;
-    border-radius:999px;
-    white-space:nowrap;
-    background:rgba(255,255,255,0.08);
-    color:var(--cream-dim);
-    flex-shrink:0;
-  }
-  .badge.today{background:linear-gradient(135deg, var(--gold), #ffb36b); color:#2c1854; font-weight:700;}
-  .badge.soon{background:rgba(255,207,134,0.18); color:var(--gold-soft); border:1px solid rgba(255,207,134,0.3);}
 
   .del-btn{
     position:absolute;
@@ -430,130 +384,6 @@
   .p-card:hover .del-btn{display:flex;}
   .del-btn:hover{background:rgba(232,121,79,0.5); color:#fff;}
 
-  .wishes{margin-top:10px; display:flex; flex-direction:column; gap:6px;}
-  .wish-bubble{
-    background:rgba(255,255,255,0.06);
-    border-radius:10px;
-    padding:7px 10px;
-    font-size:0.72rem;
-    line-height:1.35;
-  }
-  .wish-bubble b{color:var(--gold-soft); font-weight:600;}
-
-  .wish-toggle{
-    margin-top:10px;
-    background:none;
-    border:1px dashed rgba(255,255,255,0.25);
-    color:var(--cream-dim);
-    font-family:'Plus Jakarta Sans', sans-serif;
-    font-size:0.68rem;
-    font-weight:600;
-    border-radius:999px;
-    padding:6px 12px;
-    cursor:pointer;
-    width:100%;
-  }
-  .wish-toggle:hover{border-color:var(--gold-soft); color:var(--gold-soft);}
-
-  .wish-form{display:none; margin-top:10px; gap:8px; flex-direction:column;}
-  .wish-form.open{display:flex;}
-  .wish-form input, .wish-form textarea{
-    background:rgba(255,255,255,0.06);
-    border:1px solid var(--glass-border);
-    border-radius:10px;
-    padding:9px 11px;
-    color:var(--cream);
-    font-family:'Plus Jakarta Sans', sans-serif;
-    font-size:0.82rem;
-    resize:none;
-  }
-
-  .empty-state{
-    text-align:center;
-    padding:60px 20px;
-    color:var(--cream-dim);
-    font-size:0.95rem;
-  }
-  .empty-state .big{font-size:2.4rem; margin-bottom:10px;}
-
-  footer{
-    text-align:center;
-    padding:40px 0 10px;
-    color:rgba(250,243,232,0.35);
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.72rem;
-    letter-spacing:0.04em;
-  }
-
-  /* TODAY BANNER */
-  .today-banner{
-    margin-top:26px;
-    padding:26px 30px;
-    border-radius:var(--radius-lg);
-    background:linear-gradient(120deg, rgba(255,207,134,0.22), rgba(138,79,255,0.18));
-    border:1px solid rgba(255,207,134,0.5);
-    box-shadow:0 0 60px rgba(255,207,134,0.22), 0 20px 50px rgba(0,0,0,0.25);
-    backdrop-filter:blur(20px) saturate(160%);
-    -webkit-backdrop-filter:blur(20px) saturate(160%);
-    animation:glowPulse 3.2s ease-in-out infinite;
-  }
-  @keyframes glowPulse{
-    0%,100%{ box-shadow:0 0 60px rgba(255,207,134,0.22), 0 20px 50px rgba(0,0,0,0.25); }
-    50%{ box-shadow:0 0 80px rgba(255,207,134,0.36), 0 20px 50px rgba(0,0,0,0.25); }
-  }
-  @media (prefers-reduced-motion: reduce){ .today-banner{animation:none;} }
-  .today-banner .tag{
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.7rem;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--gold-soft);
-    margin:0 0 14px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .today-list{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
-    gap:14px;
-  }
-  .today-card{
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.22);
-    border-radius:var(--radius-md);
-    padding:16px 18px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .today-card .name{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-style:italic;
-    font-size:1.15rem;
-  }
-  .today-card .yap{
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.68rem;
-    color:var(--cream-dim);
-  }
-  .today-jump{
-    background:linear-gradient(135deg, var(--gold), #ffb36b);
-    color:#2c1854;
-    border:none;
-    border-radius:999px;
-    font-family:'Plus Jakarta Sans', sans-serif;
-    font-weight:700;
-    font-size:0.76rem;
-    padding:8px 14px;
-    cursor:pointer;
-    white-space:nowrap;
-    flex-shrink:0;
-  }
-  .today-jump:hover{transform:translateY(-1px);}
-
   /* UPCOMING STRIP */
   .upcoming-section{margin-top:56px;}
   .upcoming-scroll{
@@ -561,10 +391,7 @@
     gap:12px;
     overflow-x:auto;
     padding:4px 2px 14px;
-    scrollbar-width:thin;
   }
-  .upcoming-scroll::-webkit-scrollbar{height:6px;}
-  .upcoming-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15); border-radius:999px;}
   .up-pill{
     flex:0 0 auto;
     min-width:150px;
@@ -572,28 +399,17 @@
     border:1px solid var(--glass-border);
     border-radius:14px;
     padding:12px 15px;
-    backdrop-filter:blur(16px) saturate(150%);
-    -webkit-backdrop-filter:blur(16px) saturate(150%);
-  }
-  .up-pill.today{
-    border-color:rgba(255,207,134,0.55);
-    box-shadow:0 0 24px rgba(255,207,134,0.16);
-    background:rgba(255,207,134,0.1);
   }
   .up-pill .up-name{
     font-family:'Fraunces', serif;
     font-weight:600;
     font-size:0.98rem;
     margin:0 0 6px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
   }
   .up-pill .up-meta{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:8px;
   }
   .up-pill .up-date{
     font-family:'JetBrains Mono', monospace;
@@ -606,22 +422,14 @@
     padding:3px 8px;
     border-radius:999px;
     background:rgba(255,255,255,0.08);
-    color:var(--cream-dim);
-    white-space:nowrap;
-  }
-  .up-pill .up-days.today{background:linear-gradient(135deg, var(--gold), #ffb36b); color:#2c1854; font-weight:700;}
-  .upcoming-empty{
-    color:var(--cream-dim);
-    font-size:0.85rem;
-    padding:10px 2px;
   }
 
-  .loading-line{
+  footer{
     text-align:center;
-    padding:40px;
-    color:var(--cream-dim);
+    padding:40px 0 10px;
+    color:rgba(250,243,232,0.35);
     font-family:'JetBrains Mono', monospace;
-    font-size:0.8rem;
+    font-size:0.72rem;
   }
 </style>
 </head>
@@ -630,24 +438,29 @@
 <div class="grain-orb orb-1"></div>
 <div class="grain-orb orb-2"></div>
 
-<div class="wrap">
+<div class="top-auth-bar" id="navAuth"></div>
 
-  <div id="todayBanner"></div>
+<div class="wrap">
 
   <div class="hero">
     <p class="eyebrow">Birthday Board</p>
     <h1>Somebody's birthday is <em>always</em> around the corner.</h1>
-    <p>Drop your date in, and the fellowship will know exactly when to show up with confetti. Scroll down to see who's up next and leave a wish for someone.</p>
+    <p>A private space to track upcoming birthdays with your squad. Sign in or sign up to create or join a private space.</p>
+    
     <div class="hero-actions">
-      <button class="btn btn-primary" id="toggleFormBtn2">+ Add your birthday</button>
-      <button class="btn btn-ghost" id="scrollBoardBtn">See the board ↓</button>
+      <button class="btn btn-primary" id="addBdayBtn">+ Add your birthday</button>
+      <button class="btn btn-ghost" id="openSpaceModalBtn">✦ Switch / Join Space</button>
+      <button class="btn btn-ghost" id="copyShareBtn">🔗 Copy Share Link</button>
     </div>
-    <div class="sync-status" id="syncStatus"></div>
+
+    <div class="space-pill-bar" id="currentSpaceBar">
+      <span>Space: <strong id="currentSpaceName">...</strong></span>
+    </div>
 
     <div class="nextup" id="nextupWidget"></div>
 
-    <div class="form-card" id="formCard">
-      <h3>When's your day?</h3>
+    <div class="glass-card form-card" id="formCard">
+      <h3 style="font-family:'Fraunces', serif; font-style:italic; margin:0 0 20px;">When's your day?</h3>
       <div class="field-row">
         <div>
           <label for="fName">Name</label>
@@ -655,30 +468,26 @@
         </div>
         <div>
           <label for="fMonth">Month</label>
-          <select id="fMonth">
-            <option value="">—</option>
-          </select>
+          <select id="fMonth"><option value="">—</option></select>
         </div>
         <div>
           <label for="fDay">Day</label>
-          <select id="fDay">
-            <option value="">—</option>
-          </select>
+          <select id="fDay"><option value="">—</option></select>
         </div>
         <div>
           <label for="fYear">Year (optional)</label>
           <input type="text" id="fYear" placeholder="e.g. 2003" maxlength="4" inputmode="numeric">
         </div>
       </div>
-      <div class="form-actions">
+      <div style="display:flex; gap:10px; align-items:center;">
         <button class="btn btn-primary btn-sm" id="submitBirthday">Save birthday</button>
         <button class="btn btn-ghost btn-sm" id="cancelForm">Cancel</button>
-        <span class="form-msg" id="formMsg"></span>
+        <span id="formMsg" style="font-size:0.8rem; color:var(--gold-soft); font-family:'JetBrains Mono';"></span>
       </div>
     </div>
   </div>
 
-  <section class="upcoming-section" id="upcomingSection">
+  <section class="upcoming-section">
     <div class="section-head">
       <h2>Upcoming</h2>
       <span class="count" id="upcomingCount"></span>
@@ -692,23 +501,39 @@
       <span class="count" id="peopleCount"></span>
     </div>
     <div id="boardContent">
-      <div class="loading-line">gathering everyone's dates…</div>
+      <div style="text-align:center; padding:40px; color:var(--cream-dim); font-family:'JetBrains Mono';">Loading board…</div>
     </div>
   </section>
 
-  <footer>made with ✦ for Girls Who Yap</footer>
+  <footer>made with ✦ for squads everywhere</footer>
+</div>
+
+<div class="modal-overlay" id="spaceModal">
+  <div class="glass-card space-box">
+    <h3 style="font-family:'Fraunces', serif; font-style:italic; font-size:1.4rem; margin:0 0 10px;">Enter a Space Code</h3>
+    <p style="color:var(--cream-dim); font-size:0.88rem; margin:0 0 20px; line-height:1.5;">
+      Create a new space or join an existing board using a code.
+    </p>
+    <div style="margin-bottom:16px;">
+      <label for="spaceInputCode">Space Code / Name</label>
+      <input type="text" id="spaceInputCode" placeholder="e.g. besties-2026" maxlength="30">
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-primary btn-sm" id="confirmSpaceBtn">Enter Space</button>
+      <button class="btn btn-ghost btn-sm" id="closeSpaceModalBtn">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
-  getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, query, orderBy 
+  getFirestore, collection, doc, addDoc, deleteDoc, onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { 
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Your Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAtNBvpanEPJ4BBmdYHcBQCC19pk6PhbS8",
   authDomain: "birthdayboard-55297.firebaseapp.com",
@@ -718,52 +543,84 @@ const firebaseConfig = {
   appId: "1:252785098619:web:5871699b41a5f84c7c07de",
   measurementId: "G-J01SYRRW14"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-const boardId = "birthdayboard";
-const birthdaysRef = collection(db, "boards", boardId, "birthdays");
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+/* READ SPACE FROM URL PARAMETER */
+const urlParams = new URLSearchParams(window.location.search);
+let currentSpaceCode = urlParams.get('space') || 'main-lounge';
+
+function updateSpaceUI() {
+  document.getElementById('currentSpaceName').textContent = currentSpaceCode;
+}
+updateSpaceUI();
 
 let currentUser = null;
 let people = [];
+let unsubscribe = null;
 
-const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+/* AUTHENTICATION GUARD HELPER */
+async function requireAuth() {
+  if (!currentUser) {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    } catch (err) {
+      console.error("Sign-in error:", err);
+      return null;
+    }
+  }
+  return currentUser;
+}
 
-/* ---------- AUTHENTICATION LISTENERS ---------- */
-onAuthStateChanged(auth, (user) => {
+/* AUTH STATE LISTENER */
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
-  updateAuthUI();
-  render(); // Re-render to show/hide delete buttons based on owner
+  renderAuthUI();
+  subscribeBoard();
 });
 
-function updateAuthUI() {
-  const statusEl = document.getElementById('syncStatus');
+function renderAuthUI() {
+  const container = document.getElementById('navAuth');
   if (currentUser) {
-    statusEl.innerHTML = `Signed in as <b>${currentUser.displayName || currentUser.email}</b> | <a id="signOutBtn" style="cursor:pointer;text-decoration:underline;">Sign Out</a>`;
-    statusEl.classList.add('visible');
+    const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+    container.innerHTML = `
+      <span class="user-badge">${escapeHtml(displayName)}</span>
+      <button class="btn btn-ghost btn-sm" id="signOutBtn">Sign Out</button>
+    `;
     document.getElementById('signOutBtn')?.addEventListener('click', () => signOut(auth));
   } else {
-    statusEl.innerHTML = `<button id="googleSignInBtn" class="btn btn-ghost btn-sm">Sign in with Google to post</button>`;
-    statusEl.classList.add('visible');
-    document.getElementById('googleSignInBtn')?.addEventListener('click', () => signInWithPopup(auth, googleProvider));
+    container.innerHTML = `
+      <button class="btn btn-ghost btn-sm" id="googleSignInBtn">
+        Sign in / Sign up
+      </button>
+    `;
+    document.getElementById('googleSignInBtn')?.addEventListener('click', () => requireAuth());
   }
 }
 
-/* ---------- REALTIME LISTENERS (Subcollection) ---------- */
-onSnapshot(birthdaysRef, (snapshot) => {
-  people = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-  render();
-}, (error) => {
-  console.error("Firestore error:", error);
-});
+/* FIRESTORE LISTENERS */
+function subscribeBoard() {
+  if (unsubscribe) unsubscribe();
 
-/* ---------- HELPER FUNCTIONS ---------- */
+  const birthdaysRef = collection(db, "boards", currentSpaceCode, "birthdays");
+  
+  unsubscribe = onSnapshot(birthdaysRef, (snapshot) => {
+    people = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    render();
+  }, (err) => {
+    console.error('Firestore listen error:', err);
+  });
+}
+
+/* DATE UTILITIES */
 function daysUntil(month, day) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -783,47 +640,24 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/* ---------- RENDER LOGIC ---------- */
+/* RENDER METHODS */
 function render() {
-  renderTodayBanner();
   renderNextUp();
   renderUpcoming();
   renderBoard();
   document.getElementById('peopleCount').textContent = people.length + (people.length === 1 ? ' person' : ' people');
 }
 
-function renderTodayBanner() {
-  const el = document.getElementById('todayBanner');
-  const todayPeople = people.filter(p => daysUntil(p.month, p.day) === 0);
-  if (todayPeople.length === 0) { el.innerHTML = ''; return; }
-
-  el.innerHTML = `
-    <div class="today-banner">
-      <p class="tag">🎉 Birthday${todayPeople.length > 1 ? 's' : ''} today</p>
-      <div class="today-list">
-        ${todayPeople.map(p => `
-          <div class="today-card">
-            <div>
-              <div class="name">${escapeHtml(p.name)}</div>
-              <div class="yap">go say happy birthday ↓</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
 function renderNextUp() {
   const el = document.getElementById('nextupWidget');
   if (people.length === 0) {
-    el.innerHTML = `<div style="grid-column:1/-1" class="empty-nextup">No birthdays yet — be the first to add yours!</div>`;
+    el.innerHTML = `<div style="grid-column:1/-1" class="empty-nextup">No birthdays in code space <strong>${escapeHtml(currentSpaceCode)}</strong> yet. Tap '+ Add your birthday' to add the first one!</div>`;
     return;
   }
   const sorted = [...people].sort((a,b) => daysUntil(a.month, a.day) - daysUntil(b.month, b.day));
-  const next = sorted.find(p => daysUntil(p.month, p.day) > 0);
+  const next = sorted.find(p => daysUntil(p.month, p.day) >= 0);
   if (!next) {
-    el.innerHTML = `<div style="grid-column:1/-1" class="empty-nextup">Everyone is celebrating today! 🎉</div>`;
+    el.innerHTML = `<div style="grid-column:1/-1" class="empty-nextup">No upcoming birthdays!</div>`;
     return;
   }
   const du = daysUntil(next.month, next.day);
@@ -844,7 +678,7 @@ function renderUpcoming() {
   const scroll = document.getElementById('upcomingScroll');
   const countEl = document.getElementById('upcomingCount');
   if (people.length === 0) {
-    scroll.innerHTML = `<div class="upcoming-empty">No birthdays on the board yet.</div>`;
+    scroll.innerHTML = `<div style="color:var(--cream-dim); font-size:0.85rem;">No upcoming dates in this space.</div>`;
     countEl.textContent = '';
     return;
   }
@@ -854,11 +688,11 @@ function renderUpcoming() {
   scroll.innerHTML = upcoming.map(p => {
     const du = daysUntil(p.month, p.day);
     return `
-      <div class="up-pill ${du === 0 ? 'today' : ''}">
+      <div class="up-pill">
         <p class="up-name">${escapeHtml(p.name)}</p>
         <div class="up-meta">
           <span class="up-date">${fmtDate(p.month, p.day)}</span>
-          <span class="up-days ${du === 0 ? 'today' : ''}">${du === 0 ? '🎉 today' : `in ${du}d`}</span>
+          <span class="up-days">${du === 0 ? '🎉 today' : `in ${du}d`}</span>
         </div>
       </div>
     `;
@@ -868,7 +702,7 @@ function renderUpcoming() {
 function renderBoard() {
   const container = document.getElementById('boardContent');
   if (people.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="big">🎂</div>Nobody's added a birthday yet.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:60px; color:var(--cream-dim);"><div style="font-size:2.4rem; margin-bottom:10px;">🎂</div>No birthdays added to this space code yet.</div>`;
     return;
   }
 
@@ -900,33 +734,30 @@ function renderBoard() {
 
 function renderCard(p) {
   const du = daysUntil(p.month, p.day);
-  const canDelete = currentUser && p.creatorUid === currentUser.uid;
+  const canDelete = currentUser && (p.creatorUid === currentUser.uid);
   const delBtnHtml = canDelete ? `<button class="del-btn" id="del-${p.id}" title="Remove">×</button>` : '';
 
   return `
-    <div class="p-card ${du <= 7 ? 'soon' : ''}" id="card-${p.id}">
+    <div class="p-card ${du <= 7 ? 'soon' : ''}">
       ${delBtnHtml}
-      <div class="top-row">
-        <div>
-          <p class="pname">${escapeHtml(p.name)}</p>
-          <p class="pdate">${fmtDate(p.month, p.day)}${p.year ? ` · turning ${new Date().getFullYear() - p.year}` : ''}</p>
-        </div>
-      </div>
+      <div class="pname">${escapeHtml(p.name)}</div>
+      <div class="pdate">${fmtDate(p.month, p.day)}${p.year ? ` · turning ${new Date().getFullYear() - p.year}` : ''}</div>
     </div>
   `;
 }
 
-/* ---------- DATABASE ACTIONS ---------- */
 async function deletePerson(id) {
-  if (!currentUser) return;
+  const user = await requireAuth();
+  if (!user) return;
+
   try {
-    await deleteDoc(doc(db, "boards", boardId, "birthdays", id));
+    await deleteDoc(doc(db, "boards", currentSpaceCode, "birthdays", id));
   } catch (e) {
-    alert("Could not delete entry: " + e.message);
+    alert("Permission denied: You can only delete birthdays you created!");
   }
 }
 
-// Form Handlers
+/* DROPDOWNS & ACTIONS */
 const monthSel = document.getElementById('fMonth');
 MONTHS.forEach((m,i) => {
   const o = document.createElement('option');
@@ -941,12 +772,11 @@ for(let d = 1; d <= 31; d++) {
   daySel.appendChild(o);
 }
 
-document.getElementById('toggleFormBtn2').addEventListener('click', () => {
-  if (!currentUser) {
-    signInWithPopup(auth, googleProvider);
-    return;
+document.getElementById('addBdayBtn').addEventListener('click', async () => {
+  const user = await requireAuth();
+  if (user) {
+    document.getElementById('formCard').classList.add('open');
   }
-  document.getElementById('formCard').classList.add('open');
 });
 
 document.getElementById('cancelForm').addEventListener('click', () => {
@@ -954,10 +784,8 @@ document.getElementById('cancelForm').addEventListener('click', () => {
 });
 
 document.getElementById('submitBirthday').addEventListener('click', async () => {
-  if (!currentUser) {
-    alert("Please sign in first to save your birthday!");
-    return;
-  }
+  const user = await requireAuth();
+  if (!user) return;
 
   const name = document.getElementById('fName').value.trim();
   const month = parseInt(monthSel.value);
@@ -965,25 +793,70 @@ document.getElementById('submitBirthday').addEventListener('click', async () => 
   const yearRaw = document.getElementById('fYear').value.trim();
 
   if (!name || !month || !day) {
-    document.getElementById('formMsg').textContent = 'Please fill out name, month, and day.';
+    document.getElementById('formMsg').textContent = 'Please complete all required fields.';
     return;
   }
 
   try {
+    const birthdaysRef = collection(db, "boards", currentSpaceCode, "birthdays");
     await addDoc(birthdaysRef, {
       name,
       month,
       day,
       year: yearRaw ? parseInt(yearRaw) : null,
-      creatorUid: currentUser.uid, // Required by your Firestore Rules
-      createdAt: new Date()
+      creatorUid: user.uid,
+      createdAt: Date.now()
     });
 
     document.getElementById('formCard').classList.remove('open');
     document.getElementById('fName').value = '';
   } catch (e) {
     console.error(e);
-    document.getElementById('formMsg').textContent = "Failed to save: " + e.message;
+    document.getElementById('formMsg').textContent = "Failed to save.";
   }
 });
+
+/* SPACE MODAL ACTIONS (GATED BY SIGNIN) */
+const spaceModal = document.getElementById('spaceModal');
+
+document.getElementById('openSpaceModalBtn').addEventListener('click', async () => {
+  const user = await requireAuth();
+  if (user) {
+    spaceModal.classList.add('open');
+  }
+});
+
+document.getElementById('closeSpaceModalBtn').addEventListener('click', () => {
+  spaceModal.classList.remove('open');
+});
+
+document.getElementById('confirmSpaceBtn').addEventListener('click', async () => {
+  const user = await requireAuth();
+  if (!user) return;
+
+  const rawCode = document.getElementById('spaceInputCode').value.trim();
+  if(!rawCode) return;
+  
+  currentSpaceCode = rawCode.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+  
+  const newUrl = window.location.pathname + '?space=' + encodeURIComponent(currentSpaceCode);
+  window.history.pushState({ path: newUrl }, '', newUrl);
+  
+  updateSpaceUI();
+  subscribeBoard();
+  spaceModal.classList.remove('open');
+});
+
+document.getElementById('copyShareBtn').addEventListener('click', async () => {
+  const user = await requireAuth();
+  if (!user) return;
+
+  const shareUrl = window.location.origin + window.location.pathname + '?space=' + encodeURIComponent(currentSpaceCode);
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    alert("Share link copied to clipboard!");
+  });
+});
 </script>
+
+</body>
+</html>
